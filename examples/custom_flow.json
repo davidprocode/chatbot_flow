@@ -1,0 +1,285 @@
+{
+  "name": "Atendimento de Pedidos",
+  "version": "1.0",
+  "states": {
+    "start": {
+      "responses": [
+        "Olá! Bem-vindo ao nosso atendimento. Como posso ajudar você hoje?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(fazer|realizar|quero)\\s+(um\\s+)?pedido\\b"
+          },
+          "target": "new_order"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(status|andamento|situação)\\s+(do\\s+)?pedido\\b"
+          },
+          "target": "check_order"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(ajuda|dúvida|problema)\\b"
+          },
+          "target": "help"
+        }
+      ]
+    },
+    "new_order": {
+      "responses": [
+        "Claro! Vamos fazer seu pedido. Qual produto você deseja?"
+      ],
+      "transitions": [
+        {
+          "target": "order_product"
+        }
+      ]
+    },
+    "order_product": {
+      "responses": [
+        "Ótima escolha! Qual a quantidade desejada?"
+      ],
+      "transitions": [
+        {
+          "target": "order_quantity"
+        }
+      ]
+    },
+    "order_quantity": {
+      "responses": [
+        {
+          "text": "Perfeito! Seu pedido foi registrado. Deseja adicionar mais algum produto?",
+          "actions": [
+            {
+              "type": "button",
+              "text": "Sim",
+              "value": "sim"
+            },
+            {
+              "type": "button",
+              "text": "Não",
+              "value": "não"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "order_product"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar)\\b"
+          },
+          "target": "confirm_order"
+        }
+      ]
+    },
+    "confirm_order": {
+      "responses": [
+        "Seu pedido foi confirmado com sucesso! O número de acompanhamento é #12345. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "check_order": {
+      "responses": [
+        "Para verificar o status do seu pedido, por favor, informe o número de acompanhamento."
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "#\\d+"
+          },
+          "target": "order_status"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não\\s+sei|não\\s+tenho|perdi|esqueci)\\b"
+          },
+          "target": "order_recovery"
+        }
+      ]
+    },
+    "order_status": {
+      "responses": [
+        "Seu pedido está em andamento e deve ser entregue em até 2 dias úteis. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "order_recovery": {
+      "responses": [
+        "Sem problemas! Para recuperar seu número de pedido, por favor, informe o e-mail utilizado na compra."
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}"
+          },
+          "target": "email_confirmation"
+        }
+      ]
+    },
+    "email_confirmation": {
+      "responses": [
+        "Obrigado! Enviamos um e-mail com os detalhes dos seus pedidos recentes. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "help": {
+      "responses": [
+        {
+          "text": "Como posso ajudar você?",
+          "actions": [
+            {
+              "type": "button",
+              "text": "Como fazer um pedido",
+              "value": "como fazer pedido"
+            },
+            {
+              "type": "button",
+              "text": "Política de devolução",
+              "value": "política de devolução"
+            },
+            {
+              "type": "button",
+              "text": "Horário de atendimento",
+              "value": "horário de atendimento"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(como|fazer|realizar)\\s+(um\\s+)?pedido\\b"
+          },
+          "target": "help_order"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(política|politica|devolução|devoluçao|troca)\\b"
+          },
+          "target": "return_policy"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(horário|horario|atendimento|funcionamento)\\b"
+          },
+          "target": "business_hours"
+        }
+      ]
+    },
+    "help_order": {
+      "responses": [
+        "Para fazer um pedido, basta informar o produto desejado e a quantidade. Nosso sistema guiará você pelo processo. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "return_policy": {
+      "responses": [
+        "Nossa política de devolução permite trocas em até 7 dias após o recebimento, desde que o produto esteja em perfeitas condições. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "business_hours": {
+      "responses": [
+        "Nosso horário de atendimento é de segunda a sexta, das 8h às 18h, e aos sábados das 9h às 13h. Posso ajudar com mais alguma coisa?"
+      ],
+      "transitions": [
+        {
+          "condition": {
+            "pattern": "\\b(sim|claro|quero)\\b"
+          },
+          "target": "start"
+        },
+        {
+          "condition": {
+            "pattern": "\\b(não|nao|encerrar|finalizar)\\b"
+          },
+          "target": "end"
+        }
+      ]
+    },
+    "end": {
+      "responses": [
+        "Obrigado por utilizar nosso atendimento! Tenha um ótimo dia!"
+      ]
+    }
+  },
+  "intents": {
+    "order": ["fazer pedido", "realizar pedido", "quero pedir", "comprar"],
+    "status": ["status pedido", "andamento", "situação pedido", "onde está"],
+    "help": ["ajuda", "dúvida", "problema", "suporte", "assistência"],
+    "goodbye": ["tchau", "adeus", "até logo", "finalizar", "encerrar"]
+  }
+}
